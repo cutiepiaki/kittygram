@@ -1,0 +1,32 @@
+### 1. Регистрация пользователя
+POST http://localhost:8000/auth/users/
+Content-Type: application/json
+
+{
+  "username": "kittyuser",
+  "password": "kittyPass123"
+}
+
+### 2. Получение JWT токена
+POST http://localhost:8000/auth/jwt/create/
+Content-Type: application/json
+
+{
+  "username": "kittyuser",
+  "password": "kittyPass123"
+}
+
+### 3. Создание кота
+POST http://localhost:8000/cats/
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "name": "Кика",
+  "color": "Gray",
+  "birth_year": 2021
+}
+
+### 4. Получение списка котов
+GET http://localhost:8000/cats/
+Authorization: Bearer YOUR_TOKEN_HERE

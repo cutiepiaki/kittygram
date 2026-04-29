@@ -1,43 +1,113 @@
-### Как запустить проект:
+## Kittygram API
 
-Клонировать репозиторий и перейти в него в командной строке:
+### О проекте
 
-```
-git clone https://github.com/yandex-praktikum/kittygram.git
-```
+Kittygram — это REST API для управления котами и их достижениями.
+Реализованы CRUD-операции, JWT-аутентификация, фильтрация, поиск и пагинация.
 
-```
+---
+
+### Переменные окружения
+
+Перед запуском необходимо создать файл `.env`:
+
+cp .env.example .env
+
+Файл содержит настройки базы данных, секретный ключ и другие параметры проекта.
+
+---
+
+### Пример `.env.example`
+
+SECRET_KEY=django-insecure-change-me-in-production
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+DB_ENGINE=django.db.backends.sqlite3
+DB_NAME=db.sqlite3
+
+ACCESS_TOKEN_LIFETIME_MINUTES=60
+REFRESH_TOKEN_LIFETIME_DAYS=1
+
+---
+
+### Запуск проекта
+
+git clone https://github.com/cutiepiaki/kittygram
 cd kittygram
-```
 
-Cоздать и активировать виртуальное окружение:
+cp .env.example .env
+docker-compose up --build
 
-```
-python3 -m venv env
-```
+---
 
-```
-source env/bin/activate
-```
+### Применение миграций
 
-Установить зависимости из файла requirements.txt:
+В отдельном терминале:
 
-```
-python3 -m pip install --upgrade pip
-```
+docker-compose exec web python manage.py migrate
 
-```
-pip install -r requirements.txt
-```
+---
 
-Выполнить миграции:
+### Доступ к API
 
-```
-python3 manage.py migrate
-```
+После запуска проект доступен по адресу:
+http://127.0.0.1:8000/
 
-Запустить проект:
+Swagger-документация:
+http://127.0.0.1:8000/api/docs/
 
-```
-python3 manage.py runserver
-```
+---
+
+### Аутентификация
+
+Все эндпоинты требуют JWT-токен.
+
+Получение токена:
+
+POST /auth/jwt/create/
+
+Пример запроса:
+
+curl -X POST http://127.0.0.1:8000/auth/jwt/create/ \
+-H "Content-Type: application/json" \
+-d '{"username": "user", "password": "password"}'
+
+Ответ:
+
+{
+  "access": "your_access_token",
+  "refresh": "your_refresh_token"
+}
+
+Использование токена в запросах:
+
+Authorization: Bearer <access_token>
+
+---
+
+### Пример запроса к API
+
+Получение списка котов:
+
+curl -X GET http://127.0.0.1:8000/cats/ \
+-H "Authorization: Bearer <access_token>"
+
+---
+
+### Основные возможности API
+
+* Регистрация и аутентификация пользователей
+* Создание, просмотр, редактирование и удаление котов
+* Работа с достижениями
+* Фильтрация и поиск по котам
+* Пагинация результатов
+
+---
+
+### Docker
+
+Проект контейнеризирован:
+
+* `Dockerfile` — сборка backend-приложения
+* `docker-compose.yml` — запуск backend и базы данных
